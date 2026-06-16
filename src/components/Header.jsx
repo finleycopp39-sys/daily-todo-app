@@ -23,7 +23,10 @@ export default function Header({ user, percentage, taskCount, onEndDay }) {
     <header className="header">
       <div className="header-top">
         <div>
-          <h1 className="app-title">Daily Tasks</h1>
+          <div className="app-title-row">
+            <img src="/logo.png" alt="Daily Tasks" className="app-logo" />
+            <h1 className="app-title">Daily Tasks</h1>
+          </div>
           <p className="date-label">{today}</p>
         </div>
         <div className="header-right">
