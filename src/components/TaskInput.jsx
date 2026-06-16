@@ -28,7 +28,7 @@ export default function TaskInput({ onAdd }) {
           type="text"
           value={text}
           onChange={e => setText(e.target.value)}
-          placeholder="Add a task..."
+          placeholder="Enter task directive..."
           className="text-input"
           autoComplete="off"
         />
@@ -38,7 +38,7 @@ export default function TaskInput({ onAdd }) {
           onClick={isListening ? stopListening : startListening}
           title={isListening ? 'Stop listening' : 'Voice input'}
         >
-          {isListening ? '⏹' : '🎤'}
+          {isListening ? '[ ■ STOP ]' : '[ ◉ MIC ]'}
         </button>
       </div>
       <div className="priority-submit-row">
@@ -50,16 +50,16 @@ export default function TaskInput({ onAdd }) {
               className={`priority-pill priority-${p}${priority === p ? ' active' : ''}`}
               onClick={() => setPriority(p)}
             >
-              {p}
+              {p.toUpperCase()}
             </button>
           ))}
         </div>
         <button type="submit" className="add-btn" disabled={!text.trim()}>
-          Add
+          [ + ADD ]
         </button>
       </div>
       {isListening && (
-        <p className="voice-hint">Listening... speak your task</p>
+        <p className="voice-hint">◉ LISTENING — SPEAK YOUR DIRECTIVE</p>
       )}
     </form>
   );

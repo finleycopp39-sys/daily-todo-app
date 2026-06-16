@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const PRIORITY_LABEL = { high: 'High', medium: 'Med', low: 'Low' };
+const PRIORITY_LABEL = { high: 'HIGH', medium: 'MED', low: 'LOW' };
 
 export default function Suggestions({ tasks, date, onAdd }) {
   const [loading, setLoading] = useState(false);
@@ -21,12 +21,12 @@ export default function Suggestions({ tasks, date, onAdd }) {
       });
       const json = await res.json();
       if (!res.ok) {
-        setError(json.error ?? 'Request failed. Check Vercel logs.');
+        setError(json.error ?? 'REQUEST FAILED — CHECK VERCEL LOGS');
         return;
       }
       setData(json);
-    } catch (err) {
-      setError('Could not reach the server. Check your internet connection.');
+    } catch {
+      setError('NETWORK ERROR — CHECK CONNECTION');
     } finally {
       setLoading(false);
     }
@@ -40,23 +40,19 @@ export default function Suggestions({ tasks, date, onAdd }) {
   return (
     <section className="suggestions-section">
       <div className="suggestions-header">
-        <h2 className="suggestions-title">AI Suggestions</h2>
-        <button
-          className="btn-ai"
-          onClick={fetchSuggestions}
-          disabled={loading}
-        >
-          {loading ? 'Thinking…' : data ? 'Refresh' : '✨ Get Suggestions'}
+        <h2 className="suggestions-title">◈ AI ANALYSIS</h2>
+        <button className="btn-ai" onClick={fetchSuggestions} disabled={loading}>
+          {loading ? '[ PROCESSING... ]' : data ? '[ REFRESH ]' : '[ RUN ANALYSIS ]'}
         </button>
       </div>
 
-      {error && <p className="suggestions-error">{error}</p>}
+      {error && <p className="suggestions-error">⚠ {error}</p>}
 
       {data && (
         <>
           {data.insight && (
             <div className="suggestions-insight">
-              <span className="insight-icon">💡</span>
+              <span className="insight-icon">◈</span>
               {data.insight}
             </div>
           )}
@@ -74,7 +70,7 @@ export default function Suggestions({ tasks, date, onAdd }) {
                   onClick={() => handleAdd(s, i)}
                   disabled={added.has(i)}
                 >
-                  {added.has(i) ? '✓ Added' : '+ Add'}
+                  {added.has(i) ? '[ ✓ ADDED ]' : '[ + ADD ]'}
                 </button>
               </li>
             ))}

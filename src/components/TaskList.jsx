@@ -4,7 +4,7 @@ export default function TaskList({ tasks, onToggle, onDelete }) {
   if (tasks.length === 0) {
     return (
       <div className="empty-state">
-        <p>No tasks yet — add one above or use the mic!</p>
+        <p>// NO TASKS ASSIGNED — INITIALIZE ABOVE</p>
       </div>
     );
   }
@@ -16,7 +16,7 @@ export default function TaskList({ tasks, onToggle, onDelete }) {
     <div className="task-list">
       {pending.length > 0 && (
         <section className="task-section">
-          <h3 className="section-heading">To Do ({pending.length})</h3>
+          <h3 className="section-heading">QUEUE [{pending.length}]</h3>
           {pending.map(t => (
             <TaskItem key={t.id} task={t} onToggle={onToggle} onDelete={onDelete} />
           ))}
@@ -24,7 +24,7 @@ export default function TaskList({ tasks, onToggle, onDelete }) {
       )}
       {done.length > 0 && (
         <section className="task-section">
-          <h3 className="section-heading done-heading">Done ({done.length})</h3>
+          <h3 className="section-heading done-heading">COMPLETED [{done.length}]</h3>
           {done.map(t => (
             <TaskItem key={t.id} task={t} onToggle={onToggle} onDelete={onDelete} />
           ))}
