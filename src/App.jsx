@@ -7,6 +7,7 @@ import Header from './components/Header';
 import TaskInput from './components/TaskInput';
 import TaskList from './components/TaskList';
 import DailySummary from './components/DailySummary';
+import Suggestions from './components/Suggestions';
 
 function getToday() {
   return new Date().toISOString().split('T')[0];
@@ -51,6 +52,7 @@ export default function App() {
       <main className="main">
         <TaskInput onAdd={addTask} />
         <TaskList tasks={tasks} onToggle={toggleTask} onDelete={deleteTask} />
+        <Suggestions tasks={tasks} date={today} onAdd={addTask} />
       </main>
       {showSummary && (
         <DailySummary

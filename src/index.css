@@ -473,3 +473,99 @@ body {
 }
 .modal-done:hover { background: var(--primary-hover); }
 .modal-done:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* AI Suggestions */
+.suggestions-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-top: 16px;
+}
+
+.suggestions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.suggestions-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.btn-ai {
+  padding: 8px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+.btn-ai:hover:not(:disabled) { background: var(--primary-hover); }
+.btn-ai:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.suggestions-error {
+  font-size: 13px;
+  color: var(--high);
+  margin-bottom: 10px;
+}
+
+.suggestions-insight {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--primary-light);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  color: var(--primary);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.insight-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+.suggestions-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.suggestion-text {
+  flex: 1;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.btn-add-suggestion {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 99px;
+  border: 1.5px solid var(--primary);
+  background: transparent;
+  color: var(--primary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.btn-add-suggestion:hover:not(:disabled) { background: var(--primary); color: white; }
+.btn-add-suggestion:disabled { border-color: var(--low); color: var(--low); cursor: default; }
