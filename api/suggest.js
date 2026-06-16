@@ -5,49 +5,57 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { tasks = [], date } = req.body ?? {};
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY is not set in environment variables.' });
+  }
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  try {
+    const { tasks = [], date } = req.body ?? {};
 
-  const taskSummary = tasks.length
-    ? tasks.map(t => `- [${t.completed ? 'done' : 'pending'}] (${t.priority}) ${t.text}`).join('\n')
-    : 'No tasks yet today.';
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-  const message = await client.messages.create({
-    model: 'claude-opus-4-7',
-    max_tokens: 1024,
-    thinking: { type: 'adaptive' },
-    messages: [
-      {
-        role: 'user',
-        content: `You are a productivity coach helping someone plan their day (${date}).
+    const taskSummary = tasks.length
+      ? tasks.map(t => `- [${t.completed ? 'done' : 'pending'}] (${t.priority}) ${t.text}`).join('\n')
+      : 'No tasks yet today.';
+
+    const message = await client.messages.create({
+      model: 'claude-opus-4-7',
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'user',
+          content: `You are a productivity coach helping someone plan their day (${date}).
 
 Here are their current tasks:
 ${taskSummary}
 
-Please respond with ONLY valid JSON (no markdown, no code fences) in this exact shape:
+Respond with ONLY valid JSON, no markdown or code fences:
 {
-  "insight": "<one sentence observation about their current task list>",
+  "insight": "<one sentence observation about their task list>",
   "suggestions": [
-    { "text": "<task text>", "priority": "high" | "medium" | "low" },
-    { "text": "<task text>", "priority": "high" | "medium" | "low" },
-    { "text": "<task text>", "priority": "high" | "medium" | "low" }
+    { "text": "<task>", "priority": "high" },
+    { "text": "<task>", "priority": "medium" },
+    { "text": "<task>", "priority": "low" }
   ]
 }
 
-Suggest 3 tasks that would make their day more productive and balanced. Do not duplicate tasks already in their list.`,
-      },
-    ],
-  });
+Suggest 3 tasks that complement what they already have planned. Do not repeat existing tasks.`,
+        },
+      ],
+    });
 
-  const raw = message.content.find(b => b.type === 'text')?.text ?? '{}';
+    const raw = message.content.find(b => b.type === 'text')?.text ?? '{}';
 
-  let parsed;
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    parsed = { insight: 'Here are some tasks to consider adding.', suggestions: [] };
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      parsed = { insight: 'Here are some tasks to boost your day.', suggestions: [] };
+    }
+
+    return res.status(200).json(parsed);
+  } catch (err) {
+    console.error('suggest error:', err);
+    return res.status(500).json({ error: err.message ?? 'Unknown error from Claude API.' });
   }
-
-  res.status(200).json(parsed);
 }

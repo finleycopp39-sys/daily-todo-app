@@ -19,10 +19,14 @@ export default function Suggestions({ tasks, date, onAdd }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tasks, date }),
       });
-      if (!res.ok) throw new Error('Request failed');
-      setData(await res.json());
-    } catch {
-      setError('Could not load suggestions. Try again.');
+      const json = await res.json();
+      if (!res.ok) {
+        setError(json.error ?? 'Request failed. Check Vercel logs.');
+        return;
+      }
+      setData(json);
+    } catch (err) {
+      setError('Could not reach the server. Check your internet connection.');
     } finally {
       setLoading(false);
     }
