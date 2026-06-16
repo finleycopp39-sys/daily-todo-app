@@ -1,9 +1,8 @@
 const NAV_ITEMS = [
-  { id: 'tasks',  label: 'TASKS',  icon: '⊟' },
-  { id: 'focus',  label: 'FOCUS',  icon: '◎' },
-  { id: 'habits', label: 'HABITS', icon: '⊞' },
-  { id: 'goals',  label: 'GOALS',  icon: '◈' },
-  { id: 'stats',  label: 'STATS',  icon: '▤' },
+  { id: 'tasks',    label: 'TASKS',    icon: '⊟' },
+  { id: 'goals',    label: 'GOALS',    icon: '◈' },
+  { id: 'stats',    label: 'STATS',    icon: '▤' },
+  { id: 'settings', label: 'SETTINGS', icon: '⊙' },
 ];
 
 export default function AppNav({ page, onSetPage }) {

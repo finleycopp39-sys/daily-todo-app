@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { useTasks } from './hooks/useTasks';
 import { useWeekTasks } from './hooks/useWeekTasks';
 import { useNotifications } from './hooks/useNotifications';
@@ -15,9 +16,8 @@ import SortBar from './components/SortBar';
 import DailySummary from './components/DailySummary';
 import Suggestions from './components/Suggestions';
 import StatsPage from './pages/StatsPage';
-import FocusPage from './pages/FocusPage';
-import HabitsPage from './pages/HabitsPage';
 import GoalsPage from './pages/GoalsPage';
+import SettingsPage from './pages/SettingsPage';
 
 function getToday() {
   return new Date().toISOString().split('T')[0];
@@ -51,7 +51,16 @@ function applySortMode(tasks, mode) {
   return tasks;
 }
 
-export default function App() {
+function ensureWidgetUid() {
+  let uid = localStorage.getItem('widget-uid');
+  if (!uid) {
+    uid = crypto.randomUUID();
+    localStorage.setItem('widget-uid', uid);
+  }
+  return uid;
+}
+
+function AppShell() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [showSummary, setShowSummary] = useState(false);
@@ -73,6 +82,28 @@ export default function App() {
       setAuthLoading(false);
     });
   }, []);
+
+  // Sync widget data when tasks or user change
+  useEffect(() => {
+    if (!user || tasks === undefined) return;
+    const uid = ensureWidgetUid();
+    const done = tasks.filter(t => t.completed).length;
+    const payload = {
+      accent:     getComputedStyle(document.documentElement).getPropertyValue('--cyan').trim() || '#00d4ff',
+      streak:     0, // streak calculated in StatsPage; use 0 as default for widget
+      tasksTotal: tasks.length,
+      tasksDone:  done,
+      tasks:      tasks.slice(0, 7).map(t => ({ text: t.text, done: t.completed, priority: t.priority })),
+    };
+    fetch(`/api/widget-data?uid=${uid}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+  }, [user, tasks]);
+
+  // Ensure widget-uid exists on mount
+  useEffect(() => { ensureWidgetUid(); }, []);
 
   if (authLoading) {
     return <div className="loading-screen"><div className="loading-spinner" /></div>;
@@ -96,7 +127,7 @@ export default function App() {
           onEndDay={() => setShowSummary(true)}
         />
 
-        <main className="app-content">
+        <main className="app-content" key={page}>
           {page === 'tasks' && (
             <>
               <ViewToggle view={view} onSetView={setView} />
@@ -126,10 +157,9 @@ export default function App() {
             </>
           )}
 
-          {page === 'stats'  && <StatsPage user={user} />}
-          {page === 'focus'  && <FocusPage />}
-          {page === 'habits' && <HabitsPage />}
-          {page === 'goals'  && <GoalsPage />}
+          {page === 'goals'    && <GoalsPage />}
+          {page === 'stats'    && <StatsPage user={user} />}
+          {page === 'settings' && <SettingsPage user={user} />}
         </main>
       </div>
 
@@ -142,5 +172,13 @@ export default function App() {
         />
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppShell />
+    </ThemeProvider>
   );
 }
